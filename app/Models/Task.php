@@ -6,14 +6,24 @@ use Illuminate\Database\Eloquent\Model;
 
 class Task extends Model
 {
-    // protected $fillable = ['task_list_id', 'title', 'is_completed'];
+    protected $fillable = [
+        'task_list_id',
+        'title',
+        'priority',
+        'deadline',
+        'is_completed',
+        'user_id'
+    ];
 
-    // public function taskList()
-    // {
-    //     return $this->belongsTo(TaskList::class);
-    // }
+    protected $casts = [
+        'deadline' => 'datetime',
+        'is_completed' => 'boolean',
+    ];
 
-    protected $fillable = ['task_list_id', 'title', 'is_completed', 'user_id'];
+    public function taskList()
+    {
+        return $this->belongsTo(TaskList::class);
+    }
 
     public function owner()
     {

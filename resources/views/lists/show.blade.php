@@ -1,171 +1,422 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $list->name }}</title>
-    <style>
-        body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            max-width: 640px;
-            margin: 40px auto;
-            padding: 0 20px;
-            color: #2d3748;
-            line-height: 1.6;
-            background-color: #f7fafc;
-        }
 
-        h1, h2 {
-            color: #1a202c;
-            margin-bottom: 0.5rem;
+    <title>{{ $list->name }}</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f7fa;
+            color: #2d3748;
         }
 
         h1 {
-            border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 12px;
-            margin-bottom: 24px;
+            margin-bottom: 10px;
         }
 
         h2 {
-            margin-top: 28px;
-            font-size: 1.25rem;
-        }
-
-        ul {
-            list-style: none;
-            padding: 0;
-            margin: 0 0 20px 0;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            background: #fff;
-            overflow: hidden;
-        }
-
-        li {
-            padding: 12px 16px;
-            border-bottom: 1px solid #edf2f7;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        li:last-child {
-            border-bottom: none;
+            margin-top: 30px;
         }
 
         .alert {
-            padding: 10px 14px;
-            border-radius: 6px;
-            margin-bottom: 16px;
-            font-size: 0.95rem;
-        }
-        .alert-success { background: #def7ec; color: #03543f; }
-        .alert-error { background: #fde8e8; color: #9b1c1c; }
-
-        .form-row {
-            display: flex;
-            gap: 8px;
+            padding: 12px;
             margin-bottom: 20px;
+            border-radius: 6px;
+            background: #d4edda;
+            color: #155724;
         }
 
-        input[type="email"] {
-            flex: 1;
-            padding: 8px 12px;
-            border: 1px solid #cbd5e0;
-            border-radius: 6px;
-            font-size: 0.95rem;
+        .form-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border: 1px solid #ddd;
+        }
+
+        input,
+        select {
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        input[type="text"] {
+            width: 40%;
         }
 
         button {
-            padding: 8px 14px;
+            padding: 10px 15px;
             border: none;
-            border-radius: 6px;
-            background: #3182ce;
-            color: #fff;
-            font-weight: 500;
+            border-radius: 5px;
             cursor: pointer;
+            color: white;
+            background: #3182ce;
         }
 
         button:hover {
-            background: #2b6cb0;
+            opacity: 0.85;
         }
 
-        .btn-remove {
+        .btn-edit {
+            background: #805ad5;
+        }
+
+        .btn-delete {
             background: #e53e3e;
-            padding: 4px 10px;
-            font-size: 0.85rem;
         }
 
-        .btn-remove:hover {
-            background: #c53030;
+        .btn-success {
+            background: #38a169;
+        }
+
+        .task {
+            background: white;
+            padding: 18px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .task.done {
+            opacity: 0.6;
+        }
+
+        .task.done .task-title {
+            text-decoration: line-through;
+        }
+
+        .task-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .task-info {
+            margin-top: 8px;
+            margin-bottom: 12px;
         }
 
         .badge {
-            font-size: 0.8rem;
-            padding: 2px 8px;
-            border-radius: 9999px;
+            display: inline-block;
+            padding: 4px 8px;
+            margin-right: 5px;
+            border-radius: 10px;
             background: #edf2f7;
-            color: #4a5568;
+            font-size: 13px;
         }
 
-        .done {
-            text-decoration: line-through;
-            color: #a0aec0;
+        .priority-rendah {
+            background: #c6f6d5;
         }
+
+        .priority-sedang {
+            background: #feebc8;
+        }
+
+        .priority-tinggi {
+            background: #fed7d7;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .edit-form {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #ddd;
+        }
+
     </style>
+
 </head>
+
 <body>
 
     <h1>{{ $list->name }}</h1>
 
     @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
-    @if(session('error'))
-        <div class="alert alert-error">{{ session('error') }}</div>
+
+        <div class="alert">
+            {{ session('success') }}
+        </div>
+
     @endif
 
-    <h2>Members</h2>
-    <ul>
-        @forelse($list->members as $member)
-            <li>
-                <span>
-                    {{ $member->name }} 
-                    <span class="badge">{{ $member->pivot->role }}</span>
-                </span>
-                <form action="{{ route('lists.members.remove', [$list->id, $member->id]) }}" method="POST" style="margin: 0;">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn-remove">Remove</button>
-                </form>
-            </li>
-        @empty
-            <li style="color: #a0aec0;">No members yet</li>
-        @endforelse
-    </ul>
 
-    <h2>Add Member</h2>
-    <form class="form-row" action="{{ route('lists.members.add', $list->id) }}" method="POST">
-        @csrf
-        <input type="email" name="email" placeholder="user email" required>
-        <button type="submit">Add</button>
-    </form>
+    <!-- ===================================== -->
+    <!-- TAMBAH TUGAS -->
+    <!-- ===================================== -->
+
+    <h2>Tambah Tugas</h2>
+
+    <div class="form-box">
+
+        <form action="{{ route('tasks.store', $list->id) }}" method="POST">
+
+            @csrf
+
+            <input
+                type="text"
+                name="title"
+                placeholder="Nama tugas"
+                required
+            >
+
+            <select name="priority" required>
+
+                <option value="">Prioritas</option>
+
+                <option value="rendah">
+                    Rendah
+                </option>
+
+                <option value="sedang">
+                    Sedang
+                </option>
+
+                <option value="tinggi">
+                    Tinggi
+                </option>
+
+            </select>
+
+            <input
+                type="datetime-local"
+                name="deadline"
+            >
+
+            <button type="submit">
+                + Tambah Tugas
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- ===================================== -->
+    <!-- PROGRESS -->
+    <!-- ===================================== -->
 
     <h2>Progress</h2>
-    <p><strong>{{ $completedTasks }} / {{ $totalTasks }}</strong> tasks completed</p>
 
-    <ul>
-        @forelse($tasks as $task)
-            <li class="{{ $task->is_completed ? 'done' : '' }}">
-                <span>{{ $task->title }}</span>
-                <span class="badge">
-                    {{ $task->is_completed ? 'done' : 'pending' }} &bull; {{ $task->owner->email ?? 'unassigned' }}
+    <p>
+        <strong>
+            {{ $completedTasks }} / {{ $totalTasks }}
+        </strong>
+        tugas selesai
+    </p>
+
+
+    <!-- ===================================== -->
+    <!-- DAFTAR TUGAS -->
+    <!-- ===================================== -->
+
+    <h2>Daftar Tugas</h2>
+
+    @forelse($tasks as $task)
+
+        <div class="task {{ $task->is_completed ? 'done' : '' }}">
+
+            <div class="task-title">
+
+                {{ $task->title }}
+
+            </div>
+
+
+            <div class="task-info">
+
+                <span class="badge priority-{{ $task->priority }}">
+
+                    Prioritas:
+                    {{ ucfirst($task->priority) }}
+
                 </span>
-            </li>
-        @empty
-            <li style="color: #a0aec0;">No tasks found</li>
-        @endforelse
-    </ul>
+
+
+                <span class="badge">
+
+                    Deadline:
+
+                    @if($task->deadline)
+
+                        {{ $task->deadline->format('d-m-Y H:i') }}
+
+                    @else
+
+                        Tidak ada
+
+                    @endif
+
+                </span>
+
+
+                <span class="badge">
+
+                    Status:
+
+                    {{ $task->is_completed ? 'Selesai' : 'Belum selesai' }}
+
+                </span>
+
+            </div>
+
+
+            <!-- ================================= -->
+            <!-- TOMBOL -->
+            <!-- ================================= -->
+
+            <div class="task-actions">
+
+
+                <!-- Selesai / Belum selesai -->
+
+                <form
+                    action="{{ route('tasks.toggle', $task->id) }}"
+                    method="POST"
+                >
+
+                    @csrf
+
+                    @method('PATCH')
+
+                    <button
+                        type="submit"
+                        class="btn-success"
+                    >
+
+                        {{ $task->is_completed ? '↩ Belum Selesai' : '✓ Selesai' }}
+
+                    </button>
+
+                </form>
+
+
+                <!-- Hapus -->
+
+                <form
+                    action="{{ route('tasks.destroy', $task->id) }}"
+                    method="POST"
+                    onsubmit="return confirm('Yakin ingin menghapus tugas ini?')"
+                >
+
+                    @csrf
+
+                    @method('DELETE')
+
+                    <button
+                        type="submit"
+                        class="btn-delete"
+                    >
+
+                        Hapus
+
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <!-- ================================= -->
+            <!-- FORM EDIT -->
+            <!-- ================================= -->
+
+            <div class="edit-form">
+
+                <form
+                    action="{{ route('tasks.update', $task->id) }}"
+                    method="POST"
+                >
+
+                    @csrf
+
+                    @method('PUT')
+
+
+                    <input
+                        type="text"
+                        name="title"
+                        value="{{ $task->title }}"
+                        required
+                    >
+
+
+                    <select
+                        name="priority"
+                        required
+                    >
+
+                        <option
+                            value="rendah"
+                            {{ $task->priority == 'rendah' ? 'selected' : '' }}
+                        >
+                            Rendah
+                        </option>
+
+                        <option
+                            value="sedang"
+                            {{ $task->priority == 'sedang' ? 'selected' : '' }}
+                        >
+                            Sedang
+                        </option>
+
+                        <option
+                            value="tinggi"
+                            {{ $task->priority == 'tinggi' ? 'selected' : '' }}
+                        >
+                            Tinggi
+                        </option>
+
+                    </select>
+
+
+                    <input
+                        type="datetime-local"
+                        name="deadline"
+                        value="{{ $task->deadline ? $task->deadline->format('Y-m-d\TH:i') : '' }}"
+                    >
+
+
+                    <button
+                        type="submit"
+                        class="btn-edit"
+                    >
+
+                        Simpan Perubahan
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    @empty
+
+        <div class="form-box">
+
+            Belum ada tugas.
+
+        </div>
+
+    @endforelse
+
 
 </body>
+
 </html>

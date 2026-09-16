@@ -17,7 +17,7 @@ return new class extends Migration
             $table->enum('priority', ['rendah', 'sedang', 'tinggi']);
             $table->dateTime('deadline');
             $table->enum('progress', ['in progress', 'done']);
-            $table->char('task_id', 36);
+            $table->foreignId('list_id')->constrained('task_list', 'list_id');
         });
     }
 
