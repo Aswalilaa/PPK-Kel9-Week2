@@ -26,4 +26,11 @@ class User extends Authenticatable
     {
         return $this->role === 'admin';
     }
+
+    public function taskLists()
+    {
+        return $this->belongsToMany(TaskList::class, 'task_list_members')
+            ->withPivot('role')
+            ->withTimestamps();
+    }
 }
