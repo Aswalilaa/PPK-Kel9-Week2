@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('task_list_members', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('task_list_id')->constrained();
-            $table->foreignId('user_id')->constrained();
+            $table->foreignId('task_list_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->enum('role', ['owner', 'member'])->default('member');
             $table->timestamps();
         });

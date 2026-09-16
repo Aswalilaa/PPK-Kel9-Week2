@@ -8,10 +8,10 @@ class Task extends Model
 {
     // protected $fillable = ['task_list_id', 'title', 'is_completed'];
 
-    // public function taskList()
-    // {
-    //     return $this->belongsTo(TaskList::class);
-    // }
+    public function taskList()
+    {
+        return $this->belongsTo(TaskList::class);
+    }
 
     protected $fillable = ['task_list_id', 'title', 'is_completed', 'user_id'];
 
